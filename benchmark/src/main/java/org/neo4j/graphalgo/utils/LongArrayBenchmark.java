@@ -24,7 +24,7 @@ import java.util.concurrent.TimeUnit;
 public class LongArrayBenchmark {
 
     @Benchmark
-    public long _01_primitive_get(LongArrays arrays) {
+    public long primitive_get(LongArrays arrays) {
         final int size = arrays.size;
         final long[] array = arrays.primitive;
         long res = 0;
@@ -35,7 +35,7 @@ public class LongArrayBenchmark {
     }
 
     @Benchmark
-    public long[] _02_primitive_set(LongArrays arrays) {
+    public long[] primitive_set(LongArrays arrays) {
         final int size = arrays.size;
         final long[] array = arrays.primitive;
         long[] result = new long[size];
@@ -48,7 +48,7 @@ public class LongArrayBenchmark {
     }
 
     @Benchmark
-    public long _03_paged_get(LongArrays arrays) {
+    public long paged_get(LongArrays arrays) {
         final int size = arrays.size;
         final LongArray array = arrays.paged;
         long res = 0;
@@ -59,12 +59,12 @@ public class LongArrayBenchmark {
     }
 
     @Benchmark
-    public LongArray _04_paged_set(LongArrays arrays) {
+    public LongArray paged_set(LongArrays arrays) {
         return LongArrays.createPaged(arrays.primitive);
     }
 
     @Benchmark
-    public long _05_sparse_get(LongArrays arrays) {
+    public long sparse_get(LongArrays arrays) {
         final int size = arrays.size;
         final SparseLongArray array = arrays.sparse;
         long res = 0;
@@ -75,12 +75,12 @@ public class LongArrayBenchmark {
     }
 
     @Benchmark
-    public SparseLongArray _06_sparse_set(LongArrays arrays) {
+    public SparseLongArray sparse_set(LongArrays arrays) {
         return LongArrays.createSparse(arrays.primitive);
     }
 
     @Benchmark
-    public long _07_offHeap_get(LongArrays arrays) {
+    public long offHeap_get(LongArrays arrays) {
         final int size = arrays.size;
         final OffHeapLongArray array = arrays.offHeap;
         long res = 0;
@@ -91,12 +91,12 @@ public class LongArrayBenchmark {
     }
 
     @Benchmark
-    public OffHeapLongArray _08_offHeap_set(LongArrays arrays) {
+    public OffHeapLongArray offHeap_set(LongArrays arrays) {
         return LongArrays.createOffHeap(arrays.primitive);
     }
 
     @Benchmark
-    public long _09_chunked_get(LongArrays arrays) {
+    public long chunked_get(LongArrays arrays) {
         final int size = arrays.size;
         final DynamicLongArray array = arrays.chunked;
         long res = 0;
@@ -107,7 +107,7 @@ public class LongArrayBenchmark {
     }
 
     @Benchmark
-    public DynamicLongArray _10_chunked_set(LongArrays arrays) {
+    public DynamicLongArray chunked_set(LongArrays arrays) {
         return LongArrays.createChunked(arrays.primitive);
     }
 }
