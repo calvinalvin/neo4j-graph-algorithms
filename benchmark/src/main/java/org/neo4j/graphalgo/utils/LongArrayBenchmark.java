@@ -1,6 +1,6 @@
 package org.neo4j.graphalgo.utils;
 
-import org.neo4j.graphalgo.core.utils.paged.LongArray;
+import org.neo4j.graphalgo.core.utils.paged.HugeLongArray;
 import org.neo4j.graphalgo.core.utils.paged.SparseLongArray;
 import org.neo4j.unsafe.impl.batchimport.cache.DynamicLongArray;
 import org.neo4j.unsafe.impl.batchimport.cache.OffHeapLongArray;
@@ -50,7 +50,7 @@ public class LongArrayBenchmark {
     @Benchmark
     public long paged_get(LongArrays arrays) {
         final int size = arrays.size;
-        final LongArray array = arrays.paged;
+        final HugeLongArray array = arrays.paged;
         long res = 0;
         for (int i = 0; i < size; i++) {
             res += array.get(i);
@@ -59,8 +59,24 @@ public class LongArrayBenchmark {
     }
 
     @Benchmark
-    public LongArray paged_set(LongArrays arrays) {
+    public HugeLongArray paged_set(LongArrays arrays) {
         return LongArrays.createPaged(arrays.primitive);
+    }
+
+    @Benchmark
+    public long huge_get(LongArrays arrays) {
+        final int size = arrays.size;
+        final HugeLongArray array = arrays.huge;
+        long res = 0;
+        for (int i = 0; i < size; i++) {
+            res += array.get(i);
+        }
+        return res;
+    }
+
+    @Benchmark
+    public HugeLongArray huge_set(LongArrays arrays) {
+        return LongArrays.createHuge(arrays.primitive);
     }
 
     @Benchmark
