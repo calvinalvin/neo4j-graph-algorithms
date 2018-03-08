@@ -17,6 +17,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 public final class HugeLongArrayTest extends RandomizedTest {
 
@@ -194,6 +195,30 @@ public final class HugeLongArrayTest extends RandomizedTest {
 
         final long sum = ((long) size * (long) (size + 1)) / 2L;
         assertEquals(actual, sum);
+    }
+
+    @Test
+    public void shouldReturnEmptyCursorOnInvalidPosition() {
+        int size = between(10, 20);
+        HugeLongArray array = newArray(size);
+        int index = between(size + 1, size + 11);
+        final HugeLongArray.Cursor cursor = array.cursor(index, array.newCursor());
+        assertFalse(cursor.next());
+    }
+
+    @Test
+    public void shouldFailCursorOnNegativePosition() {
+        int size = between(10, 20);
+        HugeLongArray array = newArray(size);
+        int index = between(-20, -10);
+        try {
+            array.cursor(index, array.newCursor());
+            fail("unexpected success");
+        } catch (AssertionError e) {
+            assertEquals("negative index", e.getMessage());
+        } catch (ArrayIndexOutOfBoundsException e) {
+            // pass
+        }
     }
 
     @Test

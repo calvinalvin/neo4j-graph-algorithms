@@ -367,9 +367,14 @@ public abstract class HugeLongArray {
             }
 
             private void init(long fromIndex) {
-                assert fromIndex < limit;
-                offset = (int) fromIndex;
-                exhausted = false;
+                assert fromIndex >= 0 : "negative index";
+                if (fromIndex < limit) {
+                    offset = (int) fromIndex;
+                    exhausted = false;
+                } else {
+                    offset = limit;
+                    exhausted = true;
+                }
             }
 
             public final boolean next() {
@@ -510,6 +515,8 @@ public abstract class HugeLongArray {
 
         private static final class PagedCursor extends Cursor {
 
+            private static final long[] EMPTY = new long[0];
+
             private long[][] pages;
             private int maxPage;
             private long capacity;
@@ -525,12 +532,19 @@ public abstract class HugeLongArray {
             }
 
             private void init(long fromIndex) {
-                assert fromIndex < capacity;
-                fromPage = pageIndex(fromIndex);
-                array = pages[fromPage];
-                offset = indexInPage(fromIndex);
-                limit = (int) Math.min(PAGE_SIZE, capacity);
-                page = fromPage - 1;
+                assert fromIndex >= 0 : "negative index";
+                if (fromIndex < capacity) {
+                    fromPage = pageIndex(fromIndex);
+                    array = pages[fromPage];
+                    offset = indexInPage(fromIndex);
+                    limit = (int) Math.min(PAGE_SIZE, capacity);
+                    page = fromPage - 1;
+                } else {
+                    page = maxPage;
+                    array = EMPTY;
+                    offset = 0;
+                    limit = 0;
+                }
             }
 
             public final boolean next() {
