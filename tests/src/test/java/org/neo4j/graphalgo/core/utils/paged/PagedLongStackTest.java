@@ -80,6 +80,27 @@ public final class PagedLongStackTest extends RandomizedTest {
         }
     }
 
+    @Test
+    public void shouldReleaseMemory() {
+        int valuesToAdd = between(10_000, 20_000);
+        AllocationTracker tracker = AllocationTracker.create();
+        PagedLongStack stack = new PagedLongStack(valuesToAdd, tracker);
+        long tracked = tracker.tracked();
+        collector.checkThat(stack.release(), is(tracked));
+        collector.checkThat("released stack is empty", stack.isEmpty(), is(true));
+        collector.checkThat("released stack has size 0", stack.size(), is(0L));
+        try {
+            stack.pop();
+            collector.addError(new AssertionError("pop on released stack shouldn't succeed"));
+        } catch (NullPointerException ignored) {
+        }
+        try {
+            stack.peek();
+            collector.addError(new AssertionError("pop on released stack shouldn't succeed"));
+        } catch (NullPointerException ignored) {
+        }
+    }
+
     private void assertEmpty(final PagedLongStack stack) {
         collector.checkThat("empty stack is empty", stack.isEmpty(), is(true));
         collector.checkThat("empty stack has size 0", stack.size(), is(0L));
