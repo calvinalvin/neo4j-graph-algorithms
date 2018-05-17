@@ -21,6 +21,7 @@ package org.neo4j.graphalgo.core.huge;
 import org.neo4j.function.ThrowingConsumer;
 import org.neo4j.graphalgo.api.GraphSetup;
 import org.neo4j.graphalgo.core.utils.ImportProgress;
+import org.neo4j.graphalgo.core.utils.RenamesCurrentThread;
 import org.neo4j.graphalgo.core.utils.StatementAction;
 import org.neo4j.graphalgo.core.utils.paged.AllocationTracker;
 import org.neo4j.graphalgo.core.utils.paged.BitUtil;
@@ -156,7 +157,9 @@ public final class RelationshipsScanner extends StatementAction {
     }
 
     private void loadDegrees(final KernelTransaction transaction) {
-        forAllRelationships(transaction, this::loadDegree);
+        try (Revert ignore = RenamesCurrentThread.renameThread("huge-scan-degrees")) {
+            forAllRelationships(transaction, this::loadDegree);
+        }
         // remove references so that GC can eventually reclaim memory
         if (inDegrees != null) {
             tracker.remove(sizeOfObjectArray(inDegrees.length));

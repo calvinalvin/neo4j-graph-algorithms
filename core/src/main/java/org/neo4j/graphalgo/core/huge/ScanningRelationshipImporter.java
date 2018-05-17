@@ -37,7 +37,7 @@ import static org.neo4j.graphalgo.core.utils.paged.MemoryUsage.sizeOfObjectArray
 
 final class ScanningRelationshipImporter {
 
-    private static final int PER_THREAD_IN_FLIGHT = 1 << 4;
+    private static final int PER_THREAD_IN_FLIGHT = 1 << 7;
 
     private final GraphSetup setup;
     private final GraphDatabaseAPI api;

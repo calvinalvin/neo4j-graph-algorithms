@@ -26,9 +26,11 @@ public final class HugeWeightMap implements HugeWeightMapping {
 
     private PagedLongLongDoubleMap weights;
     private final double defaultValue;
+    private final int propertyKey;
 
-    public HugeWeightMap(long capacity, double defaultValue, AllocationTracker tracker) {
+    public HugeWeightMap(long capacity, double defaultValue, int propertyKey, AllocationTracker tracker) {
         this.defaultValue = defaultValue;
+        this.propertyKey = propertyKey;
         this.weights = PagedLongLongDoubleMap.newMap(capacity, tracker);
     }
 
@@ -39,6 +41,10 @@ public final class HugeWeightMap implements HugeWeightMapping {
 
     public double defaultValue() {
         return defaultValue;
+    }
+
+    public int propertyKey() {
+        return propertyKey;
     }
 
     public void put(long key1, long key2, double value) {

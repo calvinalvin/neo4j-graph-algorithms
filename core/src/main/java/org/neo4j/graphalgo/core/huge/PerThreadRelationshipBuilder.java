@@ -242,6 +242,10 @@ final class PerThreadRelationshipBuilder implements RenamesCurrentThread, Runnab
         return target.add(targetId);
     }
 
+    private void loadProperty(long source, long target, int localSource) {
+
+    }
+
     private void flush(
             CompressedLongArray[] targetIds,
             HugeLongArray offsets,
