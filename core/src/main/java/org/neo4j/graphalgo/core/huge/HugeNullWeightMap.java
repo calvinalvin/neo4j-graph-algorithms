@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.neo4j.graphalgo.core;
+package org.neo4j.graphalgo.core.huge;
 
 import org.neo4j.graphalgo.api.HugeWeightMapping;
 
@@ -26,11 +26,11 @@ import org.neo4j.graphalgo.api.HugeWeightMapping;
  *
  * @author mknblch
  */
-public class HugeNullWeightMap implements HugeWeightMapping {
+class HugeNullWeightMap implements HugeWeightMapping {
 
     private final double defaultValue;
 
-    public HugeNullWeightMap(double defaultValue) {
+    HugeNullWeightMap(double defaultValue) {
         this.defaultValue = defaultValue;
     }
 

@@ -35,7 +35,6 @@ import org.neo4j.kernel.internal.GraphDatabaseAPI;
 
 import java.util.AbstractCollection;
 import java.util.AbstractMap;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.Map;
@@ -49,8 +48,8 @@ public final class RelationshipsScanner extends StatementAction {
     private final ArrayBlockingQueue<RelationshipsBatch>[] threadQueues;
     private int[][] outDegrees;
     private int[][] inDegrees;
-    private final long[] baseIds;
     private final int threadsShift;
+    private final long threadsMask;
     private final int batchSize;
 
     private final HugeIdMap idMap;
@@ -83,10 +82,9 @@ public final class RelationshipsScanner extends StatementAction {
         this.threadQueues = threadQueues;
         this.outDegrees = outDegrees;
         this.inDegrees = inDegrees;
-        this.baseIds = new long[threadQueues.length];
-        Arrays.setAll(baseIds, i -> (long) i * perThreadSize);
-        this.batchSize = batchSize;
         this.threadsShift = Integer.numberOfTrailingZeros(perThreadSize);
+        this.threadsMask = (long)(perThreadSize - 1);
+        this.batchSize = batchSize;
         this.pool = newPool(maxInFlight);
         Map.Entry<DegreeLoader, Emit> entry = setupDegreeLoaderAndEmit(setup, batchSize, threadQueues.length);
         this.loader = entry.getKey();
@@ -221,14 +219,16 @@ public final class RelationshipsScanner extends StatementAction {
         return (int) (nodeId >>> threadsShift);
     }
 
+    private int threadLocalId(long nodeId) {
+        return (int) (nodeId >>> threadsMask);
+    }
+
     private void incOutDegree(long nodeId) {
-        int threadIdx = threadIndex(nodeId);
-        ++outDegrees[threadIdx][(int) (nodeId - baseIds[threadIdx])];
+        ++outDegrees[threadIndex(nodeId)][threadLocalId(nodeId)];
     }
 
     private void incInDegree(long nodeId) {
-        int threadIdx = threadIndex(nodeId);
-        ++inDegrees[threadIdx][(int) (nodeId - baseIds[threadIdx])];
+        ++inDegrees[threadIndex(nodeId)][threadLocalId(nodeId)];
     }
 
     private void batchRelationship(long source, long target, LongsBuffer buffer, Direction direction)
